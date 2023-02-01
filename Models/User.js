@@ -1,4 +1,5 @@
 const userSchema = require("../Schemas/user");
+const bcrypt = require('bcrypt')
 
 let User = class {
   username;
@@ -42,13 +43,13 @@ let User = class {
   registerUser()
   {
     return new Promise(async (resolve, reject)=>{
-
+        const hashedPassword = await bcrypt.hash(this.password, 7)
         //created an object of userSchema
         const user = new userSchema({
             username: this.username,
             email: this.email,
             name:this.name,
-            password:this.password
+            password:hashedPassword,
         })
         try {
             const userDb = await user.save();

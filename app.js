@@ -6,13 +6,29 @@ require("dotenv").config()
 
 const app = express();
 const db = require('./db')
+const session = require('express-session')
+const mongoDbsession = require('connect-mongodb-session')(session)
 
 const PORT = process.env.PORT || 8001;
+
+const store = new mongoDbsession({
+    uri: process.env.MONGO_URI,
+    collection: "session"
+}) 
 
 //middlewares
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+
+app.use(
+    session({
+        secret:process.env.SECRET_KEY,
+        resave: false,
+        saveUninitialized: false,
+        store:store
+    })
+)
 
 app.get("/", (req, res)=>{
 

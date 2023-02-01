@@ -1,5 +1,6 @@
 const userSchema = require("../Schemas/user");
 const bcrypt = require('bcrypt')
+const validator = require('validator')
 
 let User = class {
   username;
@@ -60,6 +61,34 @@ let User = class {
         
     })
   }
+
+static loginUser({loginId, password}){
+    return new Promise(async (resolve, reject)=>{
+        let userDb = {}
+        if(validator.isEmail(loginId)){
+            
+            userDb = await userSchema.findOne({email :loginId})
+        }
+        else{
+            userDb = await userSchema.findOne({username :loginId})
+
+            console.log("username")
+        }
+        if(!userDb)
+            return reject("No user found")
+
+
+        const isMatch = await bcrypt.compare(password, userDb.password)
+
+        if(!isMatch){
+            return reject("Password do not match")
+        }
+        return resolve(userDb)
+
+    
+    })
+}
+
 };
 
 module.exports = User

@@ -2,6 +2,7 @@ const express = require("express");
 const cleanUpAndValidate = require("../utils/AuthUtil");
 
 const User = require("../Models/User");
+const isAuth = require("../Middlewares/isAuth");
 
 const AuthRouter = express.Router();
 
@@ -100,6 +101,14 @@ AuthRouter.post("/login", async (req, res) => {
 
   try {
     const userDb = await User.loginUser({ loginId, password });
+
+    req.session.isAuth= true;
+    req.session.user= {
+        userId: userDb._id,
+        username: userDb.username,
+        email: userDb.email,
+    }
+
     return res.send({
       status: 200,
       message: "Login Success",
@@ -114,5 +123,34 @@ AuthRouter.post("/login", async (req, res) => {
 
   // console.log("Login");
 });
+
+// AuthRouter.post("/check", isAuth, (req, res)=>{
+//     console.log("Authenticated route");
+//     return res.send({
+//       status: 200,
+//       message:"Successful"
+//     })
+
+// })
+
+AuthRouter.post("/logout", isAuth, (req,res)=>{
+  const user = req.session.user;
+  console.log(user);
+
+  req.session.destroy((err)=>{
+    if(err) 
+    return res.send({
+      status: 400,
+      message:"Logout failed",
+      error: err,
+    })
+
+    return res.send({
+            status: 200,
+            message:"Logout Successful",
+            data:user
+          })
+  });
+})
 
 module.exports = AuthRouter;

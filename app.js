@@ -8,6 +8,8 @@ const app = express();
 const db = require('./db')
 const session = require('express-session')
 const mongoDbsession = require('connect-mongodb-session')(session)
+const BlogsRouter = require("./Controllers/BlogsController");
+const isAuth = require('./Middlewares/isAuth');
 
 const PORT = process.env.PORT || 8001;
 
@@ -40,6 +42,7 @@ app.get("/", (req, res)=>{
 })
 
 app.use("/auth", AuthRouter)
+app.use("/blog", isAuth,  BlogsRouter)
 
 
 

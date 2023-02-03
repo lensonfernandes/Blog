@@ -1,6 +1,7 @@
 const userSchema = require("../Schemas/user");
 const bcrypt = require('bcrypt')
 const validator = require('validator')
+const ObjectId = require('mongoDb').ObjectId
 
 let User = class {
   username;
@@ -39,6 +40,25 @@ let User = class {
         reject(error)
       }
     });
+  }
+
+  static verifyUserId({userId}){
+    return new Promise(async (resolve, reject)=>{
+      try {
+        if(!ObjectId(userId))
+        {
+          reject("Invalid UserId")
+        }
+
+        const userDb = await userSchema.findOne({_id: ObjectId(userId)})
+        if(!userDb){
+          reject("No user found")
+        }
+        resolve(userDb)
+      } catch (error) {
+        reject(error)
+      }
+    })
   }
 
   registerUser()

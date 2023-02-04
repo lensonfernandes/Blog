@@ -1,5 +1,6 @@
 const blogSchema = require("../Schemas/Blogs");
 const constants = require("../constants")
+const ObjectId = require("mongodb").ObjectId;
 
 const Blogs = class{
     title;
@@ -55,6 +56,36 @@ const Blogs = class{
                 ])
                 resolve(blogsDb)
                     console.log(blogsDb) 
+
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
+    static getMyBlogs({skip, userId}){
+        return  new Promise(async (resolve, reject)=>{
+            try {
+                const myBlogsDb = await blogSchema.aggregate([
+                    //pagination, sort
+                    {
+                        $match: { userId: ObjectId(userId)}
+                    },
+
+                    {
+                        $sort: {creationTime: -1}
+                    },
+                    {
+                        $facet: {
+                            data: [
+                                {$skip : parseInt(skip)}, 
+                                {$limit : constants.LIMIT}
+                            ]
+                        }
+                    }
+                ])
+                resolve(myBlogsDb)
+                    console.log(myBlogsDb) 
 
             } catch (error) {
                 reject(error)

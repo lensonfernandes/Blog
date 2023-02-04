@@ -90,4 +90,34 @@ BlogsRouter.get("/get-blogs",  async (req, res)=>{
 
 })
 
+BlogsRouter.get('/my-blogs', async (req, res)=>{
+    const userId = req.session.user.userId;
+    let skip = req.query.skip || 0;
+
+    console.log(userId, skip);
+
+    try{
+        const myBlogsDb = await Blogs.getMyBlogs({skip, userId})
+
+        return res.send({
+            status: 200,
+            message: "Read Success",
+            data: myBlogsDb
+            
+        })
+    }
+    catch(error){
+
+        console.log(error)
+        return res.send({
+            status: 400,
+            message: "Read Failed",
+            error: error
+            
+        })
+
+    }
+
+})
+
 module.exports = BlogsRouter;

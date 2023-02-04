@@ -69,4 +69,25 @@ BlogsRouter.post("/create-blog", (req, res)=>{
     // return res.send(true)
 })
 
+BlogsRouter.get("/get-blogs",  async (req, res)=>{
+    let skip = req.query.skip || 0;
+    console.log(skip)
+
+    try {
+       const blogsDb = await Blogs.getBlogs({skip})
+       return res.send({
+        status: 200,
+        message: "Read Successful",
+        data: blogsDb
+       })
+    } catch (error) {
+        return res.send({
+            status: 400,
+            message: "Read Unsuccessful",
+           error: error
+           })
+    }
+
+})
+
 module.exports = BlogsRouter;

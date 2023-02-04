@@ -1,4 +1,5 @@
 const blogSchema = require("../Schemas/Blogs");
+const constants = require("../constants")
 
 const Blogs = class{
     title;
@@ -30,6 +31,32 @@ const Blogs = class{
                 const blogDb = await blog.save();
                 resolve(blogDb)
             } catch (error ) {
+                reject(error)
+            }
+        })
+    }
+
+   static getBlogs({skip}){
+        return  new Promise(async (resolve, reject)=>{
+            try {
+                const blogsDb = await blogSchema.aggregate([
+                    //pagination, sort
+                    {
+                        $sort: {creationTime: -1}
+                    },
+                    {
+                        $facet: {
+                            data: [
+                                {$skip : parseInt(skip)},
+                                {$limit : constants.LIMIT}
+                            ]
+                        }
+                    }
+                ])
+                resolve(blogsDb)
+                    console.log(blogsDb) 
+
+            } catch (error) {
                 reject(error)
             }
         })

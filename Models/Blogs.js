@@ -7,12 +7,14 @@ const Blogs = class{
     textBody;
     userId;
     creationTime;
+    blogId;
 
-    constructor({title, textBody, userId, creationTime}){
+    constructor({title, textBody, userId, creationTime, blogId}){
         this.creationTime = creationTime;
         this.title = title;
         this.userId = userId;
         this.textBody = textBody;
+        this.blogId = blogId;
     }
 
     createBlog(){
@@ -93,6 +95,44 @@ const Blogs = class{
         })
     }
 
+    getDataofBlogFromId(){
+        return new Promise(async (resolve, reject)=>{
+            try {
+
+                const blogDb = await blogSchema.findOne({_id:ObjectId(this.blogId)})
+                resolve(blogDb)
+                
+            } catch (error) {
+             reject(error)   
+            }
+        })
+    }
+
+
+    updateBlog(){
+    
+        return new Promise(async (resolve, reject)=>{
+            try {
+                let newBlogData = {}
+                if (this.title) {
+                    newBlogData.title = this.title;
+                  }
+
+                  if (this.textBody) {
+                    newBlogData.textBody = this.textBody;
+                  }
+          
+                  const oldData = await blogSchema.findOneAndUpdate(
+                    { _id: ObjectId(this.blogId) },
+                    newBlogData
+                  );
+                  return resolve(oldData);
+                
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
 
 }
 

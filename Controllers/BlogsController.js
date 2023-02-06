@@ -178,4 +178,39 @@ BlogsRouter.post("/edit-blog", async (req, res) => {
   }
 });
 
+BlogsRouter.post('/delete-blog', async(req,res)=>{
+  const blogId = req.body.blogId;
+  const userId = req.session.user.userId;
+
+try{
+  const blog = new Blogs({blogId})
+  const blogDb = await blog.getDataofBlogFromId();
+
+  if(!blogDb.userId.equals(userId)){
+    return res.send({
+      status: 401,
+      message:"Not allow to Delete. Authorization failed"
+    })
+  }
+
+  //delete blog
+
+  const blogData = await blog.deleteBlog();
+
+  return res.send({
+    status: 200,
+    message: " Delete Successful",
+    data: blogData
+  })
+}
+catch(error){
+  return res.send({
+    status: 401,
+    message:"Error occurred",
+    error:error
+  })
+}
+
+})
+
 module.exports = BlogsRouter;

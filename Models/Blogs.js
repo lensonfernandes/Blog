@@ -134,6 +134,17 @@ const Blogs = class{
         })
     }
 
+    deleteBlog(){
+        return new Promise(async (resolve, reject)=>{
+            try {
+                const blogData = await blogSchema.findOneAndDelete({_id: ObjectId(this.blogId)})
+                resolve(blogData)
+            } catch (error) {
+                reject(error)
+            }
+        })
+    }
+
 }
 
 

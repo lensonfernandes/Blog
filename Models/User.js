@@ -1,7 +1,7 @@
 const userSchema = require("../Schemas/user");
 const bcrypt = require('bcrypt')
 const validator = require('validator')
-const ObjectId = require('mongoDb').ObjectId
+const ObjectId = require('mongodb').ObjectId
 
 let User = class {
   username;
